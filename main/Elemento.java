@@ -10,6 +10,8 @@ public class Elemento  {
     private int valorH;
     private Elemento previo;
     
+    
+    
 	public Elemento(String id,int valorG, int valorH, Elemento previo) {
 		super();
 		this.id = id;

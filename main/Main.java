@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Main {
 	public static ArrayList<Estanteria> estanterias;
-	static ArrayList<HashMap> pedido;
+	static HashMap<String, Integer> pedido;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -41,22 +41,22 @@ public class Main {
 		estanterias.add(s7);
 		estanterias.add(s8);
 
-		pedido = new ArrayList<HashMap>();
-		HashMap<String, Integer> lineaPedido1 = new HashMap<String, Integer>();
-		lineaPedido1.put("patatas", 40);
-		lineaPedido1.put("boligrafos", 40);
-		lineaPedido1.put("plumas", 10);
-		pedido.add(lineaPedido1);
+	
+		pedido = new HashMap<String, Integer>();
+		pedido.put("patatas", 40);
+		pedido.put("boligrafos", 40);
+		pedido.put("plumas", 10);
+	
 
 		System.out.println("El pedido contiene: ");
 		System.out.println("==============================");
 
-		for (HashMap m : pedido) {
+	
 
 			System.out.println("==============================");
-			m.forEach((k, v) -> System.out.println("Pedido ===== Key: " + k + ": Value: " + v));
+			pedido.forEach((k, v) -> System.out.println("Pedido ===== Key: " + k + ": Value: " + v));
 
-		}
+		
 
 		System.out.println("==============================");
 
@@ -136,7 +136,23 @@ public class Main {
 
 		s1.getObjetos().forEach((k, v) -> System.out.println("Estantería |S1| ===== Key: " + k + ": Value: " + v));
 
-		aEstrella(graph, "ps");
+		ArrayList<Elemento> fin = aEstrella(graph, "ps");
+		
+		for(Elemento e : fin){
+			System.out.println(e.getId());
+		}
+		
+		
+		s1.getObjetos().forEach((k, v) -> System.out.println("Estantería |S1| ===== Key: " + k + ": Value: " + v));
+		s2.getObjetos().forEach((k, v) -> System.out.println("Estantería |S2| ===== Key: " + k + ": Value: " + v));
+		s3.getObjetos().forEach((k, v) -> System.out.println("Estantería |S3| ===== Key: " + k + ": Value: " + v));
+		s4.getObjetos().forEach((k, v) -> System.out.println("Estantería |S4| ===== Key: " + k + ": Value: " + v));
+		s5.getObjetos().forEach((k, v) -> System.out.println("Estantería |S5| ===== Key: " + k + ": Value: " + v));
+		s6.getObjetos().forEach((k, v) -> System.out.println("Estantería |S6| ===== Key: " + k + ": Value: " + v));
+		s7.getObjetos().forEach((k, v) -> System.out.println("Estantería |S7| ===== Key: " + k + ": Value: " + v));
+		s8.getObjetos().forEach((k, v) -> System.out.println("Estantería |S8| ===== Key: " + k + ": Value: " + v));
+		System.out.println("==============================");
+		
 	}
 
 	public static void restarUds(String idEstanteria, String objeto, int unidades) {
@@ -173,7 +189,10 @@ public class Main {
 		ArrayList<Elemento> abiertos = new ArrayList();
 		ArrayList<Elemento> cerrados = new ArrayList();
 		
-		Elemento primero = new Elemento(pos,0,pedido.size(),null);
+		
+		int dist = caculaDist(pos);
+		Elemento primero = new Elemento(pos,0,(pedido.size()*20) + dist,null);
+		
 		
 		abiertos.add(primero);
 
@@ -185,34 +204,173 @@ public class Main {
 		while (!done) {
 			
 		actual = mejorCandidatoEnAbiertos(abiertos); //el nodo con mejor f de la lista de abiertos
-		System.out.println("El mejor candidato de esta ronda es: " +actual.getId());
+		
+		if (!esPasillo(actual.getId())){//es estantería
+			
+			System.out.println("ES ESTANTERIA: " + actual.getId());
+			
+			int cant = compruebaPedidoEstateria(actual.getId());
+			
+			if (cant > 0){
+				
+			System.out.println("cantidad quitada " + cant);
+			
+			}	
+			
+			
+		}else{
+			
+			System.out.println("ES Pasillo: " + actual.getId());
+			
+		}
+		
+		
+		System.out.println("El mejor candidato de esta ronda es --------------->" + actual.getId());
 		cerrados.add(actual);// lo añadimos a la lista de cerrados
 		abiertos.remove(actual); // lo quitamos de la lista de abiertos
 		
-		if (pedido.isEmpty()){
+		
+		
+		if (pedido.isEmpty() && actual.getId().equals("pt")){
 			System.out.println("---------FIN--------");
 			done = true;
-			return null;
+			return calcPath(primero,actual);
 		}
+		
+		
 		//Para todos los nodos adyacentes al actual
 		ArrayList<Elemento> adyacentes = getListaAdyacentes(gr,actual);
 		
 		for (Elemento e : adyacentes){
 		System.out.println("Actual " + actual.getId() + " Tiene como adyacentes: " + e.getId());
 		
+		if(!abiertos.contains(e)){
+		System.out.println("ABIERTOS NO COINTIENE: " + e.getId());
+		e.setPrevio(actual);// se le pone como previo al nodo actual
 		
+		int distant;
+		if (esPasillo(e.getId()) && esPasillo(e.getPrevio().getId())){
+			distant=10;
+		}else{
+			distant=5;
+		}
+		
+		dist = caculaDist(e.getId());
+		e.setValorG(e.getPrevio().getValorG()+distant);
+		e.setValorH((pedido.size()*20) + dist);
+		abiertos.add(e);
+			
+		}else{
+			
+			dist = caculaDist(e.getId());
+	
+			if (esPasillo(e.getId()) && esPasillo(e.getPrevio().getId())){
+				dist=10;
+			}else{
+				dist=5;
+			}
+			System.out.println("ABIERTOS COINTIENE: " + e.getId());
+			
+			if (e.getValorG()>=e.getPrevio().getValorG() + dist){
+			e.setPrevio(actual);
+			e.setValorG(e.getPrevio().getValorG() + dist);	
+				
+			}			
+		}
+		
+		  if (abiertos.isEmpty()) { // no path exists
+	            return new ArrayList(); // return empty list
+	        }
 		
 		
 		}
 		
 		
-		done = true;
+		//done = true;
 		}
 
 		return null;
 
 	}
+	
+	  private static int caculaDist(String id) {
+		// TODO Auto-generated method stub
+		  
+		  
+		
 
+	        switch (id) {
+	            case "ps":
+	                return 50;
+			case "pc1":
+	            	 return 40;
+	              
+	            case "pc2":
+	            	 return 30;
+	                
+	            case "pc3":
+	            	 return 20;
+	               
+	            case "pc4":
+	            	 return 10;
+	                
+	            case "pt":
+	            	 return 0;
+	                
+	            case "ps1":
+	            	 return 45;
+	               
+	            case "ps5":
+	            	 return 45;
+	              
+	            case "ps2":
+	            	 return 35;
+	               
+	            case "ps6":
+	            	 return 35;
+	              
+	            case "ps3":
+	            	 return 25;
+	               
+	            case "ps7":
+	            	 return 25;
+	                
+	            case "ps4":
+	            	 return 15;
+	                
+	            case "ps8":
+	            	 return 15;
+	               
+	            
+	        }
+			return 0;
+
+	       
+	    }
+	
+
+	private static ArrayList<Elemento> calcPath(Elemento start, Elemento goal) {
+		  
+		     // TODO if invalid nodes are given (eg cannot find from
+		     // goal to start, this method will result in an infinite loop!)
+		  ArrayList<Elemento> path = new ArrayList();
+		        
+		  Elemento curr = goal;
+		        boolean done = false;
+		        while (!done) {
+		            path.add(curr);
+		            curr =curr.getPrevio();
+
+		            if (curr.equals(start)) {
+		                done = true;
+		            }
+		        }
+		        path.add(start);
+		        return path;
+		    }
+	  
+
+	
 	private static ArrayList<Elemento> getListaAdyacentes(Graph<String> gr, Elemento actual) {
 		// TODO Auto-generated method stub
 		
@@ -271,8 +429,10 @@ public class Main {
 
 				for (String key : e.getObjetos().keySet()) {
 
-					if (pedido.get(0).get(key) != null) {
+					if (pedido.get(key) != null) {
 						cant++;
+						restarUds(nameEstanteria,key,pedido.get(key));
+						pedido.remove(key);
 					}
 
 				}
