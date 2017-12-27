@@ -34,6 +34,7 @@ public class Graph<V> {
 		List<Node<V>> nodes = adjacencyList.get(vertex);
 		if (nodes == null || nodes.isEmpty()) {
 			nodes = new ArrayList<Node<V>>();
+			if(node!=null)
 			nodes.add(node);
 		} else {
 			nodes.add(node);

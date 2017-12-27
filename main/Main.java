@@ -52,12 +52,12 @@ public class Main {
 		System.out.println("==============================");
 
 		for (HashMap m : pedido) {
-			
+
 			System.out.println("==============================");
 			m.forEach((k, v) -> System.out.println("Pedido ===== Key: " + k + ": Value: " + v));
 
 		}
-		
+
 		System.out.println("==============================");
 
 		s1.getObjetos().put("patatas", 200);
@@ -136,26 +136,7 @@ public class Main {
 
 		s1.getObjetos().forEach((k, v) -> System.out.println("Estantería |S1| ===== Key: " + k + ": Value: " + v));
 
-		aEstrella(graph, "pc1");
-		
-		
-		
-		ArrayList<ElementoAbierto> arraylist = new ArrayList<ElementoAbierto>();
-		arraylist.add(new ElementoAbierto("ps1",30));
-		arraylist.add(new ElementoAbierto("ps5",45));
-		arraylist.add(new ElementoAbierto("pc2",40));
-		
-		
-		for(ElementoAbierto str: arraylist){
-			System.out.println(str);
-	   }
-
-	   /* Sorting on Rollno property*/
-	   System.out.println("RollNum Sorting:");
-	   Collections.sort(arraylist, ElementoAbierto.ElementComparator);
-	   for(ElementoAbierto str: arraylist){
-			System.out.println(str);
-	   }
+		aEstrella(graph, "ps");
 	}
 
 	public static void restarUds(String idEstanteria, String objeto, int unidades) {
@@ -183,55 +164,91 @@ public class Main {
 
 	}
 
-	public static <V> void aEstrella(Graph<String> gr, String pos) {
+	public static ArrayList<Elemento> aEstrella(Graph<String> gr, String pos) {
 
-		ArrayList<String> cerrados = new ArrayList();
+		System.out.println("===========================================");
+		System.out.println("COMIENZA EL ALGORITMO");
+		System.out.println("===========================================");
 
-		cerrados.add(pos);
+		ArrayList<Elemento> abiertos = new ArrayList();
+		ArrayList<Elemento> cerrados = new ArrayList();
+		
+		Elemento primero = new Elemento(pos,0,pedido.size(),null);
+		
+		abiertos.add(primero);
 
-		int g = 0;
-		int h = 0;
-		int f = 0;
+		Boolean done = false;
 
-		System.out.println("lista de ps" + gr.adjacencyList.get(pos));
-		List<Node<String>> conexiones = gr.adjacencyList.get(pos);
+		Elemento actual;
 
-		for (int i = 0; i < conexiones.size(); i++) {
-			System.out.println(pos + "está conectado con " + conexiones.get(i).getName() + " Con peso "
-					+ conexiones.get(i).getWeight());
-
-			if (cerrados.contains(conexiones.get(i).getName())) {
-				System.out.println("Contiene");
-			} else {
-				System.out.println("NOOOOOO Contiene");
-
-				g = g + conexiones.get(i).getWeight();
-				System.out.println("la g es " + g);
-				System.out.println(conexiones.get(i));
-				if (esPasillo(conexiones.get(i).name)) {
-
-				h = 10 * pedido.get(0).size();
-				System.out.println("la h es " + h);
-				f= g+h;
-				}else{ //estanteria
-				
-				int num_coincidencias = compruebaPedidoEstateria(conexiones.get(i).name);
-				h = (pedido.get(0).size() - num_coincidencias) * 10;
-				System.out.println("la h es " + h);
-				f = g + h;
-				}
-				
-				
-				
+		// COMIENZA EL ALGORITMO
+		while (!done) {
 			
-			}
-			//
-			// for (String key : gr.adjacencyList.keySet()) {
-			// System.out.println(key);
-			// lol(gr, key);
-			// System.out.println(gr.adjacencyList.get(key));
-			// }
+		actual = mejorCandidatoEnAbiertos(abiertos); //el nodo con mejor f de la lista de abiertos
+		System.out.println("El mejor candidato de esta ronda es: " +actual.getId());
+		cerrados.add(actual);// lo añadimos a la lista de cerrados
+		abiertos.remove(actual); // lo quitamos de la lista de abiertos
+		
+		if (pedido.isEmpty()){
+			System.out.println("---------FIN--------");
+			done = true;
+			return null;
 		}
+		//Para todos los nodos adyacentes al actual
+		ArrayList<Elemento> adyacentes = getListaAdyacentes(gr,actual);
+		
+		for (Elemento e : adyacentes){
+		System.out.println("Actual " + actual.getId() + " Tiene como adyacentes: " + e.getId());
+		
+		
+		
+		
+		}
+		
+		
+		done = true;
+		}
+
+		return null;
+
+	}
+
+	private static ArrayList<Elemento> getListaAdyacentes(Graph<String> gr, Elemento actual) {
+		// TODO Auto-generated method stub
+		
+		List<Node<String>> nodes = gr.adjacencyList.get(actual.getId()); // cogemos su lista de adyacencia y la transformamos en otra manipulable por el algoritmo a*
+		ArrayList<Elemento> adyacentes = new ArrayList<Elemento>();
+		
+		
+		for (int i = 0; i < nodes.size(); i++) {
+			Elemento e = new Elemento();
+			e.setId(nodes.get(i).getName());
+			//posible actualizacion de g
+			adyacentes.add(e);
+			
+		}
+		
+		
+		return adyacentes;
+	}
+
+	private static Elemento mejorCandidatoEnAbiertos(ArrayList<Elemento> abiertos) {
+		// TODO Auto-generated method stub
+		
+		Elemento mejor = null;
+		
+		int mejorF = abiertos.get(0).getValorG() + abiertos.get(0).getValorH() ;
+		
+		for (Elemento e : abiertos){
+			
+			int fActual = e.getValorG() + e.getValorH();
+			if (fActual <= mejorF){
+				mejor=e;
+			}
+			
+		}
+		
+		return mejor;
 	}
 
 	private static boolean esPasillo(String name) {
@@ -244,33 +261,26 @@ public class Main {
 		return true;
 
 	}
-	
-	private static int compruebaPedidoEstateria(String nameEstanteria){
-		
+
+	private static int compruebaPedidoEstateria(String nameEstanteria) {
+
 		int cant = 0;
-		
+
 		for (Estanteria e : estanterias) {
 			if (e.getPos().equals(nameEstanteria)) {
-				
 
-				
-				
-				 for (String key : e.getObjetos().keySet()) {
-				 
-					 if (pedido.get(0).get(key) != null){
-						cant++; 
-					 }
-					 
-				 }
-				
-				
+				for (String key : e.getObjetos().keySet()) {
+
+					if (pedido.get(0).get(key) != null) {
+						cant++;
+					}
+
+				}
+
 			}
 		}
-		
-		
-		
-		
-		return cant;	
+
+		return cant;
 	}
 
 	static void lol(Graph<String> g, String k) {
