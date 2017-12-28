@@ -202,10 +202,6 @@ public class Main {
 
 				int cant = compruebaPedidoEstateria(actual.getId());
 
-			} else {
-
-				// System.out.println("ES Pasillo: " + actual.getId());
-
 			}
 
 			System.out.println("El mejor candidato de esta ronda es --------------->" + actual.getId().toUpperCase());
