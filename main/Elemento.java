@@ -15,6 +15,7 @@ public class Elemento  {
     
     
     
+    //-
 	public Elemento(String id,int valorG, int valorH, Elemento previo, String c, HashMap<String, Integer> pedidoActual) {
 		super();
 		this.id = id;
