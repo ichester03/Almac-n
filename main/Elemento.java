@@ -3,30 +3,17 @@ package main;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class Elemento  {
+public class Elemento {
 
-	
 	private String id;
-    private int valorG;
-    private int valorH;
-    private Elemento previo;
+	private int valorG;
+	private int valorH;
+	private Elemento previo;
 
-    private HashMap<String, Integer> estadoPedido;
-    
-    
-    
-    //-
-	public Elemento(String id,int valorG, int valorH, Elemento previo, String c, HashMap<String, Integer> pedidoActual) {
-		super();
-		this.id = id;
-		this.valorG = valorG;
-		this.valorH = valorH;
-		this.previo = previo;
-		this.estadoPedido = pedidoActual;
-	}
 	
+
 	public Elemento() {
-	
+
 	}
 
 	public String getId() {
@@ -36,7 +23,6 @@ public class Elemento  {
 	public void setId(String id) {
 		this.id = id;
 	}
-
 
 	public int getValorG() {
 		return valorG;
@@ -63,15 +49,13 @@ public class Elemento  {
 	}
 
 	
-	public HashMap<String, Integer> getEstadoPedido() {
-		return estadoPedido;
-	}
 
-	public void setEstadoPedido(HashMap<String, Integer> estadoPedido) {
-		this.estadoPedido = estadoPedido;
+	public Elemento(String id, int valorG, int valorH, Elemento previo) {
+		super();
+		this.id = id;
+		this.valorG = valorG;
+		this.valorH = valorH;
+		this.previo = previo;
 	}
-	
-   
-	
 
 }
