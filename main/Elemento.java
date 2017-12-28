@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class Elemento  {
 
@@ -9,13 +10,18 @@ public class Elemento  {
     private int valorG;
     private int valorH;
     private Elemento previo;
+
+    private HashMap<String, Integer> estadoPedido;
     
-	public Elemento(String id,int valorG, int valorH, Elemento previo) {
+    
+    
+	public Elemento(String id,int valorG, int valorH, Elemento previo, String c, HashMap<String, Integer> pedidoActual) {
 		super();
 		this.id = id;
 		this.valorG = valorG;
 		this.valorH = valorH;
 		this.previo = previo;
+		this.estadoPedido = pedidoActual;
 	}
 	
 	public Elemento() {
@@ -53,6 +59,15 @@ public class Elemento  {
 
 	public void setPrevio(Elemento previo) {
 		this.previo = previo;
+	}
+
+	
+	public HashMap<String, Integer> getEstadoPedido() {
+		return estadoPedido;
+	}
+
+	public void setEstadoPedido(HashMap<String, Integer> estadoPedido) {
+		this.estadoPedido = estadoPedido;
 	}
 	
    
