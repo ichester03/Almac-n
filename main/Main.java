@@ -114,8 +114,7 @@ public class Main {
 		s8.getObjetos().forEach((k, v) -> System.out.println("Estantería |S8| ===== Key: " + k + ": Value: " + v));
 		System.out.println("=====================================================================");
 
-		s1.getObjetos().forEach((k, v) -> System.out.println("Estantería |S1| ===== Key: " + k + ": Value: " + v));
-
+		
 		ArrayList<Elemento> fin = aEstrella(graph, "ps");
 		System.out.println("=====================================================================");
 		
@@ -242,7 +241,7 @@ public class Main {
 
 					dist = caculaDistH(e.getId());
 					e.setValorG(e.getPrevio().getValorG() + distant);
-					int factor = 50;
+					int factor = 50; // conversion Productos-distancia arbitrario
 					e.setValorH(dist + (tam_pedido * factor));
 
 					abiertos.add(e);
