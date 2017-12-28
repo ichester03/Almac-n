@@ -1,15 +1,14 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
 
 public class Main {
 	public static ArrayList<Estanteria> estanterias;
 	static HashMap<String, Integer> pedido;
+	static int dist_total;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -119,14 +118,19 @@ public class Main {
 
 		ArrayList<Elemento> fin = aEstrella(graph, "ps");
 		System.out.println("=====================================================================");
+		
+		
 		System.out.println("El camino a recorrer es: ");
+	
 		for (int j = fin.size() - 1; j >= 0; j--) {
 			Elemento e = fin.get(j);
 			System.out.print(e.getId().toUpperCase() + "->");
-
+			
 		}
-
+		
 		System.out.println("");
+		System.out.println("Se ha recorrido un total de: " + dist_total);
+	
 		System.out.println("=====================================================================");
 		System.out.println("Las estanterías se quedan con:");
 
@@ -203,7 +207,7 @@ public class Main {
 				int cant = compruebaPedidoEstateria(actual.getId());
 
 			}
-
+			dist_total= actual.getValorG();
 			System.out.println("El mejor candidato de esta ronda es --------------->" + actual.getId().toUpperCase());
 			cerrados.add(actual);// lo añadimos a la lista de cerrados
 			abiertos.remove(actual); // lo quitamos de la lista de abiertos
